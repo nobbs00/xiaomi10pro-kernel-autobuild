@@ -11,16 +11,6 @@ on:
         type: choice
         options:
           - 小米10pro
-
-jobs:
-  build_job:
-    runs-on: ubuntu-22.04
-    env:
-      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
-      CCACHE_NOHASHDIR: "true"
-      CCACHE_HARDLINK: "true"
-      CI: "false"
-
     steps:
     - name: 设置编译环境
       run: |
