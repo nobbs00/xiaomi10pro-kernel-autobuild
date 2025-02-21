@@ -6,19 +6,10 @@ on:
       phone:
         description: '选择手机型号：'
         required: true
-        default: '小米10'
+        default: '小米10pro
         type: choice
         options:
-          - 小米10
           - 小米10pro
-      susfs:
-        description: '是否集成SUSFS'
-        required: true
-        type: boolean
-      version:
-        description: '自定义版本名（如perf-xxx）/可为空（则为n0kernel）'
-        required: false
-        type: string
 jobs:
   build_job:
     runs-on: ubuntu-22.04
@@ -27,179 +18,15 @@ jobs:
       CCACHE_NOHASHDIR: "true"
       CCACHE_HARDLINK: "true"
       CI: "false"
-    steps:
-
-      - name: 1.下载编译工具
-        run: |
           mkdir -p $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
           wget -q https://github.com/ZyCromerZ/Clang/releases/download/19.0.0git-20240125-release/Clang-19.0.0git-20240125.tar.gz
           mkdir -p clang
           tar -xzf Clang-19.0.0git-20240125.tar.gz -C clang
-
-      - name: 2.克隆源码与补丁
-        run: |
-          cd $GITHUB_WORKSPACE/kernel_workspace
-          git clone -b android14-lineage21-mod-test-pr-los22 https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod.git --depth=1 android_kernel
-          git clone https://github.com/zzh20188/AUTO_BUILD.git src
-          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19 --depth=1 susfs
-
-      - name: 3.安装KSUN
-        run: |
-          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
-
-      - name: 4.开始构建
-        run: |
-          export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang/bin:$PATH
-          echo "Updated PATH: $PATH"
-          clang --version
-          
-          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-          # 自定义版本
-          if [ ! -z ${{ inputs.version }} ]; then
-            echo "不为空"
-            sed -i '$s|echo "\$res"|echo "-${{ inputs.version }}"|' ./scripts/setlocalversion
-          else
-            echo "字符串为空"
-          fi
-
-          if [ ${{ inputs.phone }} = '小米10' ]; then
-            echo "选择小米10配置"
-            DEFCONFIG=arch/arm64/configs/umi_defconfig
-          elif [ ${{ inputs.phone }} = '小米10pro' ]; then
-            echo "选择小米10pro配置"
-            DEFCONFIG=arch/arm64/configs/cmi_defconfig
-          else
-            echo "非法内容"
-          fi
-         dts_source=arch/arm64/boot/dts/vendor/qcom
-
-# Backup dts
-          cp -a ${dts_source} .dts.bak
-
-# Correct panel dimensions on MIUI builds
-         sed -i 's/<154>/<1537>/g' ${dts_source}/dsi-panel-j1s*
-         sed -i 's/<154>/<1537>/g' ${dts_source}/dsi-panel-j2*
-         sed -i 's/<155>/<1544>/g' ${dts_source}/dsi-panel-j3s-37-02-0a-dsc-video.dtsi
-         sed -i 's/<155>/<1545>/g' ${dts_source}/dsi-panel-j11-38-08-0a-fhd-cmd.dtsi
-         sed -i 's/<155>/<1546>/g' ${dts_source}/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
-         sed -i 's/<155>/<1546>/g' ${dts_source}/dsi-panel-l11r-38-08-0a-dsc-cmd.dtsi
-         sed -i 's/<70>/<695>/g' ${dts_source}/dsi-panel-j11-38-08-0a-fhd-cmd.dtsi
-         sed -i 's/<70>/<695>/g' ${dts_source}/dsi-panel-j3s-37-02-0a-dsc-video.dtsi
-         sed -i 's/<70>/<695>/g' ${dts_source}/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
-         sed -i 's/<70>/<695>/g' ${dts_source}/dsi-panel-l11r-38-08-0a-dsc-cmd.dtsi
-         sed -i 's/<71>/<710>/g' ${dts_source}/dsi-panel-j1s*
-         sed -i 's/<71>/<710>/g' ${dts_source}/dsi-panel-j2*
-
-# Enable back mi smartfps while disabling qsync min refresh-rate
-         sed -i 's/\/\/ mi,mdss-dsi-pan-enable-smart-fps/mi,mdss-dsi-pan-enable-smart-fps/g' ${dts_source}/dsi-panel*
-         sed -i 's/\/\/ mi,mdss-dsi-smart-fps-max_framerate/mi,mdss-dsi-smart-fps-max_framerate/g' ${dts_source}/dsi-panel*
-         sed -i 's/\/\/ qcom,mdss-dsi-pan-enable-smart-fps/qcom,mdss-dsi-pan-enable-smart-fps/g' ${dts_source}/dsi-panel*
-         sed -i 's/qcom,mdss-dsi-qsync-min-refresh-rate/\/\/qcom,mdss-dsi-qsync-min-refresh-rate/g' ${dts_source}/dsi-panel*
-
-# Enable back refresh rates supported on MIUI
-         sed -i 's/120 90 60/120 90 60 50 30/g' ${dts_source}/dsi-panel-g7a-36-02-0c-dsc-video.dtsi
-         sed -i 's/120 90 60/120 90 60 50 30/g' ${dts_source}/dsi-panel-g7a-37-02-0a-dsc-video.dtsi
-         sed -i 's/120 90 60/120 90 60 50 30/g' ${dts_source}/dsi-panel-g7a-37-02-0b-dsc-video.dtsi
-         sed -i 's/144 120 90 60/144 120 90 60 50 48 30/g' ${dts_source}/dsi-panel-j3s-37-02-0a-dsc-video.dtsi
-
-
-# Enable back brightness control from dtsi
-         sed -i 's/\/\/39 00 00 00 00 00 03 51 03 FF/39 00 00 00 00 00 03 51 03 FF/g' ${dts_source}/dsi-panel-j9-38-0a-0a-fhd-video.dtsi
-         sed -i 's/\/\/39 00 00 00 00 00 03 51 0D FF/39 00 00 00 00 00 03 51 0D FF/g' ${dts_source}/dsi-panel-j2-p2-1-38-0c-0a-dsc-cmd.dtsi
-         sed -i 's/\/\/39 00 00 00 00 00 05 51 0F 8F 00 00/39 00 00 00 00 00 05 51 0F 8F 00 00/g' ${dts_source}/dsi-panel-j1s-42-02-0a-dsc-cmd.dtsi
-         sed -i 's/\/\/39 00 00 00 00 00 05 51 0F 8F 00 00/39 00 00 00 00 00 05 51 0F 8F 00 00/g' ${dts_source}/dsi-panel-j1s-42-02-0a-mp-dsc-cmd.dtsi
-         sed -i 's/\/\/39 00 00 00 00 00 05 51 0F 8F 00 00/39 00 00 00 00 00 05 51 0F 8F 00 00/g' ${dts_source}/dsi-panel-j2-mp-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 00 00 00 00 00 05 51 0F 8F 00 00/39 00 00 00 00 00 05 51 0F 8F 00 00/g' ${dts_source}/dsi-panel-j2-p2-1-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 00 00 00 00 00 05 51 0F 8F 00 00/39 00 00 00 00 00 05 51 0F 8F 00 00/g' ${dts_source}/dsi-panel-j2s-mp-42-02-0a-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 00 00/39 01 00 00 00 00 03 51 00 00/g' ${dts_source}/dsi-panel-j2-38-0c-0a-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 00 00/39 01 00 00 00 00 03 51 00 00/g' ${dts_source}/dsi-panel-j2-38-0c-0a-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 03 FF/39 01 00 00 00 00 03 51 03 FF/g' ${dts_source}/dsi-panel-j11-38-08-0a-fhd-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 03 FF/39 01 00 00 00 00 03 51 03 FF/g' ${dts_source}/dsi-panel-j9-38-0a-0a-fhd-video.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 07 FF/39 01 00 00 00 00 03 51 07 FF/g' ${dts_source}/dsi-panel-j1u-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 07 FF/39 01 00 00 00 00 03 51 07 FF/g' ${dts_source}/dsi-panel-j2-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 07 FF/39 01 00 00 00 00 03 51 07 FF/g' ${dts_source}/dsi-panel-j2-p1-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 0F FF/39 01 00 00 00 00 03 51 0F FF/g' ${dts_source}/dsi-panel-j1u-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 0F FF/39 01 00 00 00 00 03 51 0F FF/g' ${dts_source}/dsi-panel-j2-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 03 51 0F FF/39 01 00 00 00 00 03 51 0F FF/g' ${dts_source}/dsi-panel-j2-p1-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 05 51 07 FF 00 00/39 01 00 00 00 00 05 51 07 FF 00 00/g' ${dts_source}/dsi-panel-j1s-42-02-0a-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 05 51 07 FF 00 00/39 01 00 00 00 00 05 51 07 FF 00 00/g' ${dts_source}/dsi-panel-j1s-42-02-0a-mp-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 05 51 07 FF 00 00/39 01 00 00 00 00 05 51 07 FF 00 00/g' ${dts_source}/dsi-panel-j2-mp-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 05 51 07 FF 00 00/39 01 00 00 00 00 05 51 07 FF 00 00/g' ${dts_source}/dsi-panel-j2-p2-1-42-02-0b-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 00 00 05 51 07 FF 00 00/39 01 00 00 00 00 05 51 07 FF 00 00/g' ${dts_source}/dsi-panel-j2s-mp-42-02-0a-dsc-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 01 00 03 51 03 FF/39 01 00 00 01 00 03 51 03 FF/g' ${dts_source}/dsi-panel-j11-38-08-0a-fhd-cmd.dtsi
-         sed -i 's/\/\/39 01 00 00 11 00 03 51 03 FF/39 01 00 00 11 00 03 51 03 FF/g' ${dts_source}/dsi-panel-j2-p2-1-38-0c-0a-dsc-cmd.dtsi
-
-
-         make $MAKE_ARGS ${TARGET_DEVICE}_defconfig
-
-          scripts/config --file out/.config
-
-
-         scripts/config --file out/.config \
-         --set-str STATIC_USERMODEHELPER_PATH /system/bin/micd \
-          
-          # 基础配置
-          -d DEBUG_FS \            # 生产环境减少调试开销
-          -e LTO_CLANG \           # 避免潜在编译问题
-          -d LOCALVERSION_AUTO \   # 固定版本号
-          -e PERF_CRITICAL_RT_TASK \   # 实时任务调度
-          -e SF_BINDER \               # SurfaceFlinger Binder优化
-          -e OVERLAY_FS \              # Android动态分区必需
-          -e TASK_DELAY_ACCT \         # 延迟统计（需权衡开销）
-
-          # 内存管理优化
-          -e MIUI_ZRAM_MEMORY_TRACKING \  # ZRAM监控
-          -e MI_RECLAIM \             # 定制内存回收
-          -e BOOTUP_RECLAIM \         # 启动加速
-          -d MI_MEMORY_SYSFS \        # 减少sysfs开销
-
-          # 处理器调度
-          -e MIGT \                   # 多核调度
-          -e MIGT_ENERGY_MODEL \      # 能效模型
-          -e EAS \                    # 新增：能效感知调度
-          -e UCLAMP_TASK \            # 新增：任务利用率钳制
-
-          # 硬件特性支持
-          -e HW_FBE_METADATA \        # 新增：FBE硬件加密
-          -e QCOM_CPUFREQ_HW \        # 新增：骁龙CPU频率驱动
-          -e ADRENO_SMMU \            # 新增：GPU内存管理
-          -e F2FS_FS \                # 新增：闪存友好文件系统
-
-          # 稳定性调整
-          -d XIAOMI_MIUI \            # 减少MIUI定制依赖
-          -d MIHW \                   # 冗余硬件抽象层
-          -d PACKAGE_RUNTIME_INFO \   # 减少运行时开销
-          -d CONFIG_MODULE_SIG_SHA512 \ # 简化模块签名
-          -e MODULE_SIG \             # 新增：基础模块验证
-
-          # 电源管理
-          -e QCOM_LMH \               # 新增：温度限频
-          -e QTI_BCL_PMIC5 \          # 新增：PMIC温度监控
-          -e THERMAL_SPM \            # 新增：SPM温控集成
-
-          # 网络优化
-          -e WLAN_FEATURE_PKT_CAPTURE \ # 新增：WiFi诊断
-          -e IPA_V3 \                 # 新增：IP加速器v3
-
-          # 调试与监控
-          -e SCHEDSTATS \             # 新增：调度器统计
-          -d KPERFEVENTS \            # 
-
-          make -j$(nproc --all) CC=clang O=out ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 CROSS_COMPILE=aarch64-buildroot-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-androideabi- .config
-          make -j8 CC=clang O=out ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi-    
-      
-      - name: 5.查看成果
-        run: |
-            cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel/out/arch/arm64/boot
-            ls
-            strings Image | grep "Linux version"
-            cp Image $GITHUB_WORKSPACE/kernel_workspace/src/Anykernel/
-
-      - name: 6.上传刷入包
-        uses: actions/upload-artifact@v4
-        with:
-          name: KSUN_SUS_sm8250.zip
-          path: kernel_workspace/src/Anykernel/*
-          retention-days: 3
+          mkdir proton-clang
+					cd proton-clang
+					wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
+					unzip 20210522.zip
+				  cd ..
+          git clone -b android14-lineage21-mod-test-pr-los22 https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod.git
+          bash build.sh cmi ksu
