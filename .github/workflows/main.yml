@@ -78,7 +78,7 @@ jobs:
 
           echo "当前配置为 $DEFCONFIG"
           # 基础配置
-          $GITHUB_WORKSPACE/kernel_workspace/android_kernel/scripts/config --set-str STATIC_USERMODEHELPER_PATH /system/bin/micd \
+          $GITHUB_WORKSPACE/kernel_workspace/android_kernel/scripts/config --set-str arch/arm64/configs/cmi_defconfig /system/bin/micd \
           -d DEBUG_FS \            # 生产环境减少调试开销
           -e LTO_CLANG \           # 避免潜在编译问题
           -d LOCALVERSION_AUTO \   # 固定版本号
