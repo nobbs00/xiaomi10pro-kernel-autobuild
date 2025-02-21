@@ -1,5 +1,6 @@
 name: 编译KSUN——SUS内核
 run-name: ${{ github.actor }} 正在编译 骁龙865 小米系列内核！🚀 🚀
+
 on:
   workflow_dispatch:
     inputs:
@@ -10,6 +11,7 @@ on:
         type: choice
         options:
           - 小米10pro
+
 jobs:
   build_job:
     runs-on: ubuntu-22.04
@@ -18,10 +20,21 @@ jobs:
       CCACHE_NOHASHDIR: "true"
       CCACHE_HARDLINK: "true"
       CI: "false"
-        mkdir proton-clang
-	cd proton-clang
-	wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
-	unzip 20210522.zip
-	cd ..
+
+    steps:
+    - name: 设置编译环境
+      run: |
+        mkdir -p proton-clang
+        cd proton-clang
+        wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
+        unzip 20210522.zip
+        cd ..
+        
+    - name: 克隆内核源码
+      run: |
         git clone -b android14-lineage21-mod-test-pr-los22 https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod.git
+        
+    - name: 开始编译
+      run: |
+        cd kernel_xiaomi_sm8250_mod
         bash build.sh cmi ksu
