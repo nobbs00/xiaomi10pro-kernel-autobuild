@@ -77,7 +77,6 @@ jobs:
           fi
 
           echo "当前配置为 $DEFCONFIG"
-          scripts/config --file out/.config \
           # 基础配置
           --set-str STATIC_USERMODEHELPER_PATH /system/bin/micd \
           -d DEBUG_FS \            # 生产环境减少调试开销
