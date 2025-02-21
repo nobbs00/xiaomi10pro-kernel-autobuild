@@ -32,7 +32,7 @@ jobs:
         
     - name: 克隆内核源码
       run: |
-        git clone -b android14-lineage21-mod-test-pr-los22 https://github.com/liyafe1997/kernel_xiaomi_sm8250_mod.git
+        git clone https://github.com/nobbs00/kernel_xiaomi_10pro_mod.git
         
     - name: 开始编译
       run: |
