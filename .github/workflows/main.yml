@@ -6,7 +6,7 @@ on:
       phone:
         description: '选择手机型号：'
         required: true
-        default: '小米10pro
+        default: '小米10pro'
         type: choice
         options:
           - 小米10pro
