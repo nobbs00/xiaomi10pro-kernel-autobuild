@@ -37,5 +37,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Kernel_MIUI.zip
-          path: /home/runner/work/xiaomi10pro-kernel-autobuild/xiaomi10pro-kernel-autobuild/kernel_xiaomi_10pro_mod/anykernel/Kernel_MIUI.zip
+          path: /home/runner/work/xiaomi10pro-kernel-autobuild/xiaomi10pro-kernel-autobuild/kernel_xiaomi_10pro_mod/anykernel/*
           retention-days: 3
