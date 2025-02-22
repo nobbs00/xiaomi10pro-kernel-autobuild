@@ -36,6 +36,6 @@ jobs:
       - name: 上传刷入包
         uses: actions/upload-artifact@v4
         with:
-          name: kernel_miui*.zip
+          name: Kernel_MIUI*.zip
           path: /home/runner/work/xiaomi10pro-kernel-autobuild/xiaomi10pro-kernel-autobuild/kernel_xiaomi_10pro_mod/*
           retention-days: 3
