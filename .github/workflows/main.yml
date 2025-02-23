@@ -1,4 +1,4 @@
-3name: 编译KSUN——SUS内核
+name: 编译KSUN——SUS内核
 run-name: ${{ github.actor }} 正在编译 骁龙865 小米系列内核！🚀 🚀
 
 on:
