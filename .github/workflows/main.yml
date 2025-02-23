@@ -22,7 +22,7 @@ jobs:
           
           wget https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250223-release/Clang-21.0.0git-20250223.tar.gz
           tar -xzf Clang-21.0.0git-20250223.tar.gz -C Clang-21.0.0git-20250223
-          cd ..
+          
 
       - name: 克隆内核源码
         run: |
