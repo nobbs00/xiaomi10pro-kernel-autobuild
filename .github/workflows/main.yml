@@ -18,9 +18,9 @@ jobs:
     steps:
       - name: 设置编译环境
         run: |
+          mkdir Clang-21.0.0git-20250223
           
-          
-          wget https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250223-release/Clang-21.0.0git-20250223.tar.gz
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250223-release/Clang-21.0.0git-20250223.tar.gz
           tar -xzf Clang-21.0.0git-20250223.tar.gz -C Clang-21.0.0git-20250223
           
 
