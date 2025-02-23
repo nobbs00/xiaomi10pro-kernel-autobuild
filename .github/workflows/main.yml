@@ -33,9 +33,9 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
-          wget -q https://github.com/ZyCromerZ/Clang/releases/download/16.0.6-20240430-release/Clang-16.0.6-20240430.tar.gz
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250223-release/Clang-21.0.0git-20250223.tar.gz
           mkdir -p clang
-          tar -xzf Clang-16.0.6-20240430.tar.gz -C clang
+          tar -xzf CClang-21.0.0git-20250223.tar.gz -C clang
 
       - name: 2.克隆源码与补丁
         run: |
