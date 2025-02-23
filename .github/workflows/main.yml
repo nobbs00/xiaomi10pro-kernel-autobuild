@@ -21,7 +21,7 @@ jobs:
           mkdir -p proton-clang
           cd proton-clang
           wget https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250223-release/Clang-21.0.0git-20250223.tar.gz
-          tar -xvzf Clang-21.0.0git-20250223.tar.gz -C proton-clang-20210522
+          tar Clang-21.0.0git-20250223.tar.gz
           cd ..
 
       - name: 克隆内核源码
