@@ -19,9 +19,9 @@ jobs:
       - name: 设置编译环境
         run: |
           
-          wget -q https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20250129-release/Clang-20.0.0git-20250129.tar.gz
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/15.0.7-20240620-release/Clang-15.0.7-20240620.tar.gz
           mkdir -p clang1
-          tar -xzf Clang-20.0.0git-20250129.tar.gz -C clang1
+          tar -xzf Clang-15.0.7-20240620.tar.gz -C clang1
 
       - name: 克隆内核源码
         run: |
