@@ -18,11 +18,10 @@ jobs:
     steps:
       - name: 设置编译环境
         run: |
-          mkdir llvm21.0.0-binutils2.43.1_amd64-full-toolchain-20250207
           
-          wget -q https://github.com/Mandi-Sa/clang/releases/download/amd64-full-toolchain-21/llvm21.0.0-binutils2.43.1_amd64-full-toolchain-20250207.7z
-          7z x llvm21.0.0-binutils2.43.1_amd64-full-toolchain-20250207.7z -ollvm21.0.0-binutils2.43.1_amd64-full-toolchain-20250207
-          
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20250129-release/Clang-20.0.0git-20250129.tar.gz
+          mkdir -p clang1
+          tar -xzf Clang-20.0.0git-20250129.tar.gz -C clang1
 
       - name: 克隆内核源码
         run: |
