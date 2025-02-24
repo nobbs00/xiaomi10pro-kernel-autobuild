@@ -19,10 +19,12 @@ jobs:
       - name: 设置编译环境
         run: |
           
-          wget -q https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
+          
           mkdir -p clang1
           cd clang1
+          wget -q https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
           unzip 20210522.zip
+          cd..
           
 
       - name: 克隆内核源码
