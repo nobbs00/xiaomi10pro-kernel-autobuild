@@ -21,7 +21,9 @@ jobs:
           
           wget -q https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
           mkdir -p clang1
-          unzip 20210522.zip -d clang1
+          cd clang1
+          unzip 20210522.zip
+          
 
       - name: 克隆内核源码
         run: |
