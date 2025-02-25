@@ -41,7 +41,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace
           git clone https://github.com/jhchong94/kernel_xiaomi_sm8250_n0kernel --depth=1 android_kernel
-          git -b nono clone https://github.com/nobbs00/AUTO_BUILD.git src
+          git clone -b nono https://github.com/nobbs00/xiaomi10pro-kernel-autobuild.git src
           git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19 --depth=1 susfs
 
       - name: 3.安装KSUN
