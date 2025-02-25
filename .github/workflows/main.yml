@@ -35,7 +35,7 @@ jobs:
           cd $GITHUB_WORKSPACE/kernel_workspace
           wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-19.1.5/LLVM-ET-Arm-19.1.5-Linux-AArch64.tar.xz
           mkdir -p clang
-          tar -xzf LLVM-ET-Arm-19.1.5-Linux-AArch64.tar.xz -C clang
+          tar -xvf LLVM-ET-Arm-19.1.5-Linux-AArch64.tar.xz -C clang
 
       - name: 2.克隆源码与补丁
         run: |
