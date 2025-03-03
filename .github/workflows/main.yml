@@ -27,7 +27,7 @@ jobs:
       - name: 克隆内核源码
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace
-          git clone https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git --depth=1 android_kernel
+          git clone -b test https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git --depth=1 android_kernel
           git clone -b test https://github.com/nobbs00/xiaomi10pro-kernel-autobuild.git src
      
       - name: 4.集成KSU
