@@ -41,7 +41,7 @@ jobs:
 
       - name: 开始编译
         run: |
-          cd kernel_xiaomi_sm8250_mod
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           bash build.sh cmi ksu
 
       - name: 上传刷入包
