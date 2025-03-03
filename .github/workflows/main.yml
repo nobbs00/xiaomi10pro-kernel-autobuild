@@ -18,15 +18,10 @@ jobs:
     steps:
       - name: 设置编译环境
         run: |
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/19.0.0git-20240125-release/Clang-19.0.0git-20240125.tar.gz
+          mkdir -p 2025
+          tar -xzf Clang-19.0.0git-20240125.tar.gz -C 2025
           
-          
-          
-          
-          wget -q https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
-          unzip 20210522.zip
-          
-          
-
       - name: 克隆内核源码
         run: |
           git clone https://github.com/nobbs00/kernel_xiaomi_10pro_mod.git
