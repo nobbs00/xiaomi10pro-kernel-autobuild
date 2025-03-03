@@ -24,16 +24,16 @@ jobs:
           
       - name: 克隆内核源码
         run: |
-          git clone https://github.com/nobbs00/kernel_xiaomi_10pro_mod.git
+          git clone https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git
 
       - name: 开始编译
         run: |
-          cd kernel_xiaomi_10pro_mod
+          cd kernel_xiaomi_sm8250_mod
           bash build.sh cmi ksu
 
       - name: 上传刷入包
         uses: actions/upload-artifact@v4
         with:
           name: Kernel_MIUI_cmi
-          path: /home/runner/work/xiaomi10pro-kernel-autobuild/xiaomi10pro-kernel-autobuild/kernel_xiaomi_10pro_mod/anykernel/*
+          path: /home/runner/work/xiaomi10pro-kernel-autobuild/xiaomi10pro-kernel-autobuild/kernel_xiaomi_sm8250_mod/anykernel/*
           retention-days: 3
