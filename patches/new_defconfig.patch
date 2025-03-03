@@ -1,4 +1,4 @@
-diff --git a/arch/arm64/configs/vendor/cmi_defconfig b/arch/arm64/configs/cmi_defconfig
+diff --git a/arch/arm64/configs/cmi_defconfig b/arch/arm64/configs/cmi_defconfig
 index ad15c232f..ba3437036 100644
 --- a/arch/arm64/configs/cmi_defconfig
 +++ b/arch/arm64/configs/cmi_defconfig
