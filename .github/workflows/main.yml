@@ -28,7 +28,6 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace
           git clone -b test https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git --depth=1 android_kernel
-          git clone -b test https://github.com/nobbs00/xiaomi10pro-kernel-autobuild.git src
      
       - name: 4.集成KSU
         run: |
@@ -48,5 +47,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Kernel_MIUI_cmi
-          path: kernel_workspace/src/anykernel/*
+          path: kernel_workspace/android_kernel/anykernel/*
           retention-days: 3
