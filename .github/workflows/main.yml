@@ -48,5 +48,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Kernel_MIUI_cmi
-          path: kernel_workspace/src/Anykernel/*
+          path: kernel_workspace/src/anykernel/*
           retention-days: 3
