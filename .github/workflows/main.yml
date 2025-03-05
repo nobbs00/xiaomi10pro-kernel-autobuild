@@ -14,15 +14,17 @@ on:
 
 jobs:
   build_job:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: 设置编译环境
         run: |
           mkdir -p $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
-          wget -q https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250304-release/Clang-21.0.0git-20250304.tar.gz
           mkdir -p 2025
-          tar -xzf Clang-21.0.0git-20250304.tar.gz -C 2025
+          cd 2025
+          wget https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman -O antman
+          chmod +x antman
+          bash antman -S
           
       - name: 克隆内核源码
         run: |
