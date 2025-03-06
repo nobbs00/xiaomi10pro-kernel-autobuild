@@ -16,6 +16,14 @@ jobs:
   build_job:
     runs-on: ubuntu-latest
     steps:
+      - name: 设置编译环境
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+          cd $GITHUB_WORKSPACE/kernel_workspace
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/14.0.6-20240212-release/Clang-14.0.6-20240212.tar.gz
+          mkdir -p 2025
+          tar -xzf Clang-14.0.6-20240212.tar.gz -C 2025
+          
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
@@ -126,7 +134,8 @@ jobs:
 
       - name: 开始编译
         run: |
-          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          cd $GITHUB_WORKSPACE/kernel_workspace/kernel_platform
+          
           bash build.sh cmi ksu
 
       - name: 上传刷入包
