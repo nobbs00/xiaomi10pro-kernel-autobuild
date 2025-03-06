@@ -24,32 +24,9 @@ jobs:
           mkdir -p 2025
           tar -xzf Clang-14.0.6-20240212.tar.gz -C 2025
           
-          
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          root-reserve-mb: 8192
-          temp-reserve-mb: 8192
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
       - name: Install dependencies
         run: |
-         sudo apt install -y python3 git curl patch bc bison flex libssl-dev
-
-      - name: Install repo tool
-        run: |
-         curl https://storage.googleapis.com/git-repo-downloads/repo > ~/repo
-         chmod a+x ~/repo
-         sudo mv ~/repo /usr/local/bin/repo
-
-      - name: Initialize repo and sync
-        run: |
-          
-          git clone -b test https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git --depth=1 android_kernel
-          git clone -b test https://github.com/nobbs00/xiaomi10pro-kernel-autobuild.git src
-
+         sudo apt install -y python3 git curl patch bc bison flex libssl-dev      
       - name: Set up KernelSU Next
         if: github.event.inputs.KSUNEXT_ENABLED == 'true'
         run: |
