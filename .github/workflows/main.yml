@@ -35,7 +35,6 @@ jobs:
           remove-codeql: 'true'
       - name: Install dependencies
         run: |
-         sudo apt update && sudo apt upgrade -y
          sudo apt install -y python3 git curl patch bc bison flex libssl-dev
 
       - name: Install repo tool
@@ -64,19 +63,19 @@ jobs:
         if: github.event.inputs.SUSFS_ENABLED == 'true'
         run: |
          cd kernel_workspace
-         git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
+         git clone https://gitlab.com/simonpunk/susfs4ksu.git -b cmi-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
          git clone https://github.com/TheWildJames/kernel_patches.git
          cd kernel_platform
          cp ../kernel_patches/next/0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch ./KernelSU-Next/
-         cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
-         cp -r ../susfs4ksu/kernel_patches/fs/* ./common/fs/
-         cp -r ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
+         cp ../susfs4ksu/kernel_patches/50_add_susfs_in_cmi-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch .
+         cp -r ../susfs4ksu/kernel_patches/fs/* ./fs/
+         cp -r ../susfs4ksu/kernel_patches/include/linux/* ./include/linux/
 
          # Apply patches
          cd ./KernelSU-Next
          patch -p1 < 0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch || true
-         cd ../common
-         patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
+         cd ../
+         patch -p1 < 50_add_susfs_in_cmi-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
 
          cp ../../kernel_patches/next/next_hooks.patch ./
          patch -p1 -F 3 < next_hooks.patch
@@ -106,26 +105,24 @@ jobs:
       - name: Apply new hook and add configuration
         run: |
          cd kernel_workspace/kernel_platform
-         echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_WITH_KPROBES=n" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
-         sed -i '2s/check_defconfig//' ./common/build.config.gki
-
+         echo "CONFIG_KSU=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_WITH_KPROBES=n" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./arch/arm64/configs/cmi_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./arch/arm64/configs/cmi_defconfig
 
       - name: 开始编译
         run: |
