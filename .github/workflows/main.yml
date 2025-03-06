@@ -122,5 +122,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Kernel_MIUI_cmi
-          path: $GITHUB_WORKSPACE/kernel_workspace/android_kernel/anykernel/*
+          path: kernel_workspace/android_kernel/anykernel/*
           retention-days: 3
