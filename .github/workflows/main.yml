@@ -116,7 +116,6 @@ jobs:
       - name: 开始编译
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-          export LTO=thin
           bash build.sh cmi ksu
 
       - name: 上传刷入包
