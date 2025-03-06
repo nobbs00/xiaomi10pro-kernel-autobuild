@@ -46,11 +46,11 @@ jobs:
       - name: Set up susfs
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace
-          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b cmi-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
+          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19
           git clone https://github.com/TheWildJames/kernel_patches.git
           cd android_kernel
           cp ../kernel_patches/next/0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch ./KernelSU-Next/
-          cp ../susfs4ksu/kernel_patches/50_add_susfs_in_cmi-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch .
+          cp ../susfs4ksu/kernel_patches/50_add_susfs_in_kernel-4.19.patch .
           cp -r ../susfs4ksu/kernel_patches/fs/* ./fs/
           cp -r ../susfs4ksu/kernel_patches/include/linux/* ./include/linux/
 
@@ -58,7 +58,7 @@ jobs:
           cd ./KernelSU-Next
           patch -p1 < 0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch || true
           cd ../
-          patch -p1 < 50_add_susfs_in_cmi-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
+          patch -p1 < 50_add_susfs_in_kernel-4.19.patch || true
 
           cp ../kernel_patches/next/next_hooks.patch ./
           patch -p1 -F 3 < next_hooks.patch
@@ -109,7 +109,7 @@ jobs:
       - name: 开始编译
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-          bash build.sh cmi ksu
+          bash build.sh cmi
 
       - name: 上传刷入包
         uses: actions/upload-artifact@v4
