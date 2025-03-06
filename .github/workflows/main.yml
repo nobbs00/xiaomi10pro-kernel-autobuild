@@ -24,11 +24,6 @@ jobs:
           mkdir -p 2025
           tar -xzf Clang-20.0.0git-20250129.tar.gz -C 2025
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y python3 git curl patch bc bison flex libssl-dev
-
       - name: Initialize repo and sync
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace
