@@ -50,11 +50,6 @@ jobs:
           git clone -b test https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git --depth=1 kernel_platform
           git clone -b test https://github.com/nobbs00/xiaomi10pro-kernel-autobuild.git src
 
-         rm kernel_platform/common/android/abi_gki_protected_exports_* || echo "No protected exports!"
-         rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
-         sed -i 's/ -dirty//g' kernel_platform/common/scripts/setlocalversion
-         sed -i 's/ -dirty//g' kernel_platform/msm-kernel/scripts/setlocalversion
-
       - name: Set up KernelSU Next
         if: github.event.inputs.KSUNEXT_ENABLED == 'true'
         run: |
