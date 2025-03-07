@@ -1,5 +1,6 @@
 name: 编译KSUN——SUS内核
 run-name: ${{ github.actor }} 正在编译 骁龙865 小米系列内核！🚀 🚀
+
 on:
   workflow_dispatch:
     inputs:
@@ -28,7 +29,7 @@ jobs:
           cd $GITHUB_WORKSPACE/kernel_workspace
           git clone -b test https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git --depth=1 android_kernel
           if [ ! -d "android_kernel" ]; then
-            echo "Error: android_kernel directory not found!"
+            echo "::error::Error: android_kernel directory not found!"
             exit 1
           fi
           git clone -b test https://github.com/nobbs00/xiaomi10pro-kernel-autobuild.git src
@@ -38,7 +39,7 @@ jobs:
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/refs/heads/next-susfs/kernel/setup.sh" | bash -s
           cd KernelSU-Next
-          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
+          KSU_VERSION=$(expr $(git rev-list --count HEAD) + 10200)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
           sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
 
@@ -53,73 +54,63 @@ jobs:
           cp -r ../susfs4ksu/kernel_patches/fs/* ./fs/
           cp -r ../susfs4ksu/kernel_patches/include/linux/* ./include/linux/
 
-          # Apply patches
-          # cd ./KernelSU-Next
-          # patch -p1 < 0001-kernel-patch-susfs-v1.5.5-to-KernelSU-Next-v1.0.5.patch || true
-          # cd ../
-          # patch -p1 < 50_add_susfs_in_kernel-4.19.patch || true
-
-          # cp ../kernel_patches/next/next_hooks.patch ./
-          # patch -p1 -F 3 < next_hooks.patch
-
-          # Apply VFS fix changes directly
-
-      - name: Setup environment
+      - name: 调试环境设置
         run: |
-        # 显示调试信息
-        echo "Workspace: $GITHUB_WORKSPACE"
-         cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-        echo "Current directory: $(pwd)"
-         ls -l kernel/
+          echo "Workspace: $GITHUB_WORKSPACE"
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          echo "当前目录: $(pwd)"
+          ls -l kernel/
 
-      - name: Apply VFS fix to ksud.c
+      - name: 应用VFS修复到ksud.c
         run: |
-         cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-         sed -i '/#include "selinux\/selinux.h"/a \
-         bool ksu_vfs_read_hook = true;\
-         bool ksu_execveat_hook = true;\
-         bool ksu_input_hook = true;\
-         EXPORT_SYMBOL(ksu_vfs_read_hook);\
-         EXPORT_SYMBOL(ksu_execveat_hook);\
-         EXPORT_SYMBOL(ksu_input_hook);' kernel/ksud.c
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          sed -i '/#include "selinux\/selinux.h"/a \
+          bool ksu_vfs_read_hook = true;\
+          bool ksu_execveat_hook = true;\
+          bool ksu_input_hook = true;\
+          EXPORT_SYMBOL(ksu_vfs_read_hook);\
+          EXPORT_SYMBOL(ksu_execveat_hook);\
+          EXPORT_SYMBOL(ksu_input_hook);' kernel/ksud.c
 
-      - name: Apply VFS fix to ksud.h
+      - name: 应用VFS修复到ksud.h
         run: |
-         cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-         sed -i '/#include <linux\/types.h>/a \
-         extern bool ksu_vfs_read_hook;\
-         extern bool ksu_execveat_hook;\
-         extern bool ksu_input_hook;' kernel/ksud.h
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          sed -i '/#include <linux\/types.h>/a \
+          extern bool ksu_vfs_read_hook;\
+          extern bool ksu_execveat_hook;\
+          extern bool ksu_input_hook;' kernel/ksud.h
 
-      - name: Verify changes
+      - name: 验证修改
         run: |
-         cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-         echo "=== ksud.c changes ==="
-         grep -A5 'selinux/selinux.h' kernel/ksud.c
-         echo "=== ksud.h changes ==="
-         grep -A3 'linux/types.h' kernel/ksud.h
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          echo "=== ksud.c 修改内容 ==="
+          grep -A5 'selinux/selinux.h' kernel/ksud.c
+          echo "=== ksud.h 修改内容 ==="
+          grep -A3 'linux/types.h' kernel/ksud.h
 
-      - name: Apply new hook and add configuration
+      - name: 应用新Hook和配置
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           echo "CONFIG_KSU=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_WITH_KPROBES=n" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> ./arch/arm64/configs/cmi_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./arch/arm64/configs/cmi_defconfig
+          {
+            echo "CONFIG_KSU_WITH_KPROBES=n";
+            echo "CONFIG_KSU_SUSFS=y";
+            echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y";
+            echo "CONFIG_KSU_SUSFS_SUS_PATH=y";
+            echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y";
+            echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y";
+            echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y";
+            echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y";
+            echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n";
+            echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y";
+            echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y";
+            echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y";
+            echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y";
+            echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y";
+            echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y";
+            echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y";
+            echo "CONFIG_KSU_SUSFS_SUS_SU=n";
+          } >> ./arch/arm64/configs/cmi_defconfig
 
       - name: 开始编译
         run: |
@@ -127,8 +118,9 @@ jobs:
           bash build.sh cmi
 
       - name: 上传刷入包
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Kernel_MIUI_cmi
-          path: kernel_workspace/android_kernel/anykernel/*
+          path: $GITHUB_WORKSPACE/kernel_workspace/android_kernel/anykernel/*
           retention-days: 3
