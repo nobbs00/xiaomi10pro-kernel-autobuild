@@ -59,8 +59,8 @@ jobs:
           # cd ../
           # patch -p1 < 50_add_susfs_in_kernel-4.19.patch || true
 
-          cp ../kernel_patches/next/next_hooks.patch ./
-          patch -p1 -F 3 < next_hooks.patch
+          # cp ../kernel_patches/next/next_hooks.patch ./
+          # patch -p1 -F 3 < next_hooks.patch
 
           # Apply VFS fix changes directly
           sed -i '/#include "selinux\/selinux.h"/a \
@@ -75,7 +75,7 @@ jobs:
           extern bool ksu_execveat_hook;\
           extern bool ksu_input_hook;' kernel/ksud.h || true
 
-          cd common
+          
           cp ../kernel_patches/69_hide_stuff.patch ./
           patch -p1 -F 3 < 69_hide_stuff.patch
           git add -A && git commit -a -m "BUILD Kernel with SUSFS v${{ github.event.inputs.SUSFS_VERSION }}"
