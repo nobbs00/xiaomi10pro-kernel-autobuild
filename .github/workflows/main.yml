@@ -64,32 +64,40 @@ jobs:
 
           # Apply VFS fix changes directly
 
-    # 进入目录（严格检查是否成功）
-cd "$GITHUB_WORKSPACE/kernel_workspace/android_kernel" || { echo "目录不存在！"; exit 1; }
+      - name: Setup environment
+        run: |
+        # 显示调试信息
+        echo "Workspace: $GITHUB_WORKSPACE"
+         cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+        echo "Current directory: $(pwd)"
+         ls -l kernel/
 
-# 调试：显示路径和文件
-echo "当前目录: $(pwd)"
-ls -l kernel/ksud.c kernel/ksud.h || { echo "文件未找到，请检查路径！"; exit 1; }
+      - name: Apply VFS fix to ksud.c
+        run: |
+         cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+         sed -i '/#include "selinux\/selinux.h"/a \
+         bool ksu_vfs_read_hook = true;\
+         bool ksu_execveat_hook = true;\
+         bool ksu_input_hook = true;\
+         EXPORT_SYMBOL(ksu_vfs_read_hook);\
+         EXPORT_SYMBOL(ksu_execveat_hook);\
+         EXPORT_SYMBOL(ksu_input_hook);' kernel/ksud.c
 
-# 执行 sed 命令（使用实际路径）
-sed -i '/#include "selinux\/selinux.h"/a \
-bool ksu_vfs_read_hook = true;\
-bool ksu_execveat_hook = true;\
-bool ksu_input_hook = true;\
-EXPORT_SYMBOL(ksu_vfs_read_hook);\
-EXPORT_SYMBOL(ksu_execveat_hook);\
-EXPORT_SYMBOL(ksu_input_hook);' kernel/ksud.c
+      - name: Apply VFS fix to ksud.h
+        run: |
+         cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+         sed -i '/#include <linux\/types.h>/a \
+         extern bool ksu_vfs_read_hook;\
+         extern bool ksu_execveat_hook;\
+         extern bool ksu_input_hook;' kernel/ksud.h
 
-sed -i '/#include <linux\/types.h>/a \
-extern bool ksu_vfs_read_hook;\
-extern bool ksu_execveat_hook;\
-extern bool ksu_input_hook;' kernel/ksud.h      
-          cp ../kernel_patches/69_hide_stuff.patch ./
-          patch -p1 -F 3 < 69_hide_stuff.patch
-          git add -A && git commit -a -m "BUILD Kernel with SUSFS v${{ github.event.inputs.SUSFS_VERSION }}"
-          cd ../msm-kernel
-          git add -A && git commit -a -m "Update for SUSFS"
-          cd ..
+      - name: Verify changes
+        run: |
+         cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+         echo "=== ksud.c changes ==="
+         grep -A5 'selinux/selinux.h' kernel/ksud.c
+         echo "=== ksud.h changes ==="
+         grep -A3 'linux/types.h' kernel/ksud.h
 
       - name: Apply new hook and add configuration
         run: |
