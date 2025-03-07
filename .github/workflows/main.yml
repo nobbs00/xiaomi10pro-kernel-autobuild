@@ -63,7 +63,7 @@ jobs:
           # patch -p1 -F 3 < next_hooks.patch
 
           # Apply VFS fix changes directly
-          cd android_kernel
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           sed -i '/#include "selinux\/selinux.h"/a \
           bool ksu_vfs_read_hook = true;\
           bool ksu_execveat_hook = true;\
