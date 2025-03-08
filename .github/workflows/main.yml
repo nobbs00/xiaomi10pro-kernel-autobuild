@@ -20,16 +20,18 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
-          wget -q https://github.com/ZyCromerZ/Clang/releases/download/14.0.6-20240212-release/Clang-14.0.6-20240212.tar.gz
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20250129-release/Clang-20.0.0git-20250129.tar.gz
           mkdir -p 2025
-          tar -xzf Clang-14.0.6-20240212.tar.gz -C 2025
+          tar -xzf Clang-20.0.0git-20250129.tar.gz -C 2025
           
       - name: 克隆内核源码
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace
           git clone https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git --depth=1 android_kernel
           git clone -b test https://github.com/nobbs00/xiaomi10pro-kernel-autobuild.git src
-     
+          cd android_kernel
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/refs/heads/next-susfs/kernel/setup.sh" | bash -s next-susfs
+
       - name: 4.集成KSU
         run: |
           ls
@@ -37,16 +39,16 @@ jobs:
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           cp $GITHUB_WORKSPACE/kernel_workspace/src/patches/* .
           patch -p1 < new_defconfig.patch
-          patch -p1 < non-kprobes.patch
+          
 
       - name: 开始编译
         run: |
-          cd kernel_xiaomi_sm8250_mod
-          bash build.sh cmi ksu
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          bash build.sh cmi
 
       - name: 上传刷入包
         uses: actions/upload-artifact@v4
         with:
-          name: Kernel_MIUI_cmi
-          path: kernel_workspace/src/anykernel/*
+          name: cmi_test
+          path: kernel_workspace/android_kernel/anykernel/*
           retention-days: 3
