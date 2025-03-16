@@ -20,9 +20,9 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
-          wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
           mkdir -p 2025
           cd 2025
+          wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.zip
           unzip 20210522.zip
           
       - name: 克隆内核源码
