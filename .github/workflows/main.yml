@@ -20,9 +20,9 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/kernel_workspace
           cd $GITHUB_WORKSPACE/kernel_workspace
-          wget -q https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20250129-release/Clang-20.0.0git-20250129.tar.gz
+          wget -q https://github.com/ZyCromerZ/Clang/releases/download/21.0.0git-20250316-release/Clang-21.0.0git-20250316.tar.gz
           mkdir -p 2025
-          tar -xzf Clang-20.0.0git-20250129.tar.gz -C 2025
+          tar -xzf Clang-21.0.0git-20250316.tar.gz -C 2025
           
       - name: 克隆内核源码
         run: |
