@@ -211,8 +211,11 @@ scripts/config --file out/.config \
     -e PERF_HELPER \
     -e BOOTUP_RECLAIM \
     -e MI_RECLAIM \
-    -e CONFIG_SCHED_BORE \
-    -e RTMM
+    -e RTMM \
+    -e SCHED_BORE \
+    -e ANDROID_SIMPLE_LMK \
+    -e CPU_IDLE_GOV_TEO \
+    -e ZRAM_WRITEBACK
     
 make CFLAGS="-O3 -flto -march=armv8-a -ffast-math" LDFLAGS="-flto" $MAKE_ARGS -j$(nproc)
 
