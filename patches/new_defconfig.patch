@@ -2,7 +2,7 @@ diff --git a/arch/arm64/configs/cmi_defconfig b/arch/arm64/configs/cmi_defconfig
 index ad15c232f..ba3437036 100644
 --- a/arch/arm64/configs/cmi_defconfig
 +++ b/arch/arm64/configs/cmi_defconfig
-@@ -791,0 +791,23 @@ CONFIG_TECHPACK_CAMERA_XIAOMI=y
+@@ -793,0 +793,23 @@ CONFIG_TECHPACK_CAMERA_XIAOMI=y
 +CONFIG_MODULES=y
 +CONFIG_KSU=y
 +CONFIG_KSU_SUSFS=y
