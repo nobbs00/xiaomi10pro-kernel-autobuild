@@ -28,18 +28,8 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace
           git clone https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git --depth=1 android_kernel
-          git clone -b test https://github.com/nobbs00/xiaomi10pro-kernel-autobuild.git src
           cd android_kernel
-          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/refs/heads/next-susfs/kernel/setup.sh" | bash -s next-susfs
-
-      - name: 4.集成KSU
-        run: |
-          ls
-          echo "进入源码目录"
-          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-          cp $GITHUB_WORKSPACE/kernel_workspace/src/patches/* .
-          patch -p1 < new_defconfig.patch
-          
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/refs/heads/next-susfs/kernel/setup.sh" | bash -s next-susfs        
 
       - name: 开始编译
         run: |
