@@ -185,6 +185,22 @@ make $MAKE_ARGS ${TARGET_DEVICE}_defconfig
 
 scripts/config --file out/.config \
     --set-str STATIC_USERMODEHELPER_PATH "/system/bin/micd" \
+    -e KSU \
+    -e KSU_SUSFS_HAS_MAGIC_MOUNT \
+    -e KSU_SUSFS_SUS_PATH \
+    -e KSU_SUSFS_SUS_MOUNT \
+    -e KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT \
+    -e KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT \
+    -e KSU_SUSFS_SUS_KSTAT \
+    -e KSU_SUSFS_SUS_OVERLAYFS \
+    -e KSU_SUSFS_TRY_UMOUNT \
+    -e KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT \
+    -e KSU_SUSFS_SPOOF_UNAME \
+    -e KSU_SUSFS_ENABLE_LOG \
+    -e KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS \
+    -e KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG \
+    -e KSU_SUSFS_OPEN_REDIRECT \
+    -e KSU_SUSFS_SUS_SU \
     -e PERF_CRITICAL_RT_TASK \
     -e PERF_CRITICAL_RT_TASK	\
     -e SF_BINDER		\
@@ -217,7 +233,7 @@ scripts/config --file out/.config \
     -e CPU_IDLE_GOV_TEO \
     -e ZRAM_WRITEBACK
     
-make CFLAGS="-O3 -flto -march=armv8-a -ffast-math" LDFLAGS="-flto" $MAKE_ARGS -j$(nproc)
+make CFLAGS="-O3 -flto -march=armv8-a -ffast-math -fsanitize=leak" LDFLAGS="-flto" $MAKE_ARGS -j$(nproc)
 
 if [ -f "out/arch/arm64/boot/Image" ]; then
     echo "The file [out/arch/arm64/boot/Image] exists. MIUI Build successfully."
