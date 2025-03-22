@@ -58,6 +58,6 @@ jobs:
     - name: 上传刷入包
       uses: actions/upload-artifact@v4
       with:
-        name: cmi_flash_package
+        name: cmi_
         path: ${{ env.ANY_KERNEL_PATH }}/*
         retention-days: 3
