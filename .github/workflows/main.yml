@@ -45,8 +45,8 @@ jobs:
     - name: 初始化 KernelSU
       run: |
         cd $KERNEL_DIR
-        curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s susfs-dev
-
+        curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next-susfs/kernel/setup.sh" | \
+        bash -s next-susfs
     - name: 开始编译
       run: |
         cd $KERNEL_DIR
