@@ -40,7 +40,6 @@ jobs:
         mkdir -p $KERNEL_DIR
         git clone https://github.com/nobbs00/kernel_xiaomi_sm8250_mod.git \
           --depth=1 \
-          --branch=main \
           $KERNEL_DIR
 
     - name: 初始化 KernelSU
