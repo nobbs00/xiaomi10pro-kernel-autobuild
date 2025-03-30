@@ -24,7 +24,7 @@ jobs:
     - name: Setup variables
       id: vars
       run: |
-        echo "CLANG_VER=20250323" >> $GITHUB_ENV
+        echo "CLANG_VER=20250330" >> $GITHUB_ENV
         echo "CLANG_PATH=$GITHUB_WORKSPACE/2025" >> $GITHUB_ENV
 
     # ========== 工具链准备 ==========
