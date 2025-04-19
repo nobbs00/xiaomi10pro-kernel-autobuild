@@ -1,11 +1,5 @@
 #!/bin/bash
-
-# Some logics of this script are copied from [scripts/build_kernel]. Thanks to UtsavBalar1231.
-
-# Ensure the script exits on error
 set -e
-#!/bin/bash
-
 # 优先在当前目录和用户主目录下搜索（避免全盘搜索）
 SEARCH_PATHS=(
   "$PWD" 
