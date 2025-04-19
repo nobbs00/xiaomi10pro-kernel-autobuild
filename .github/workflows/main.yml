@@ -54,7 +54,7 @@ jobs:
     - name: 开始编译
       run: |
         cd $KERNEL_DIR
-        bash build.sh cmi
+        bash build.sh cmi ksu
         ls -lh $ANY_KERNEL_PATH  # 验证产物生成
 
     # ========== 产物处理 ==========
