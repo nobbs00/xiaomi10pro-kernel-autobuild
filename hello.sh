@@ -196,7 +196,6 @@ scripts/config --file out/.config \
     -e KSU_SUSFS_OPEN_REDIRECT \
     -e KSU_SUSFS_SUS_SU \
     -e PERF_CRITICAL_RT_TASK \
-    -e PERF_CRITICAL_RT_TASK	\
     -e SF_BINDER		\
     -e OVERLAY_FS		\
     -d DEBUG_FS \
@@ -222,9 +221,6 @@ scripts/config --file out/.config \
     -e BOOTUP_RECLAIM \
     -e MI_RECLAIM \
     -e RTMM \
-    -e SCHED_BORE \
-    -e ANDROID_SIMPLE_LMK \
-    -e CPU_IDLE_GOV_TEO \
     -e ZRAM_WRITEBACK
     
 make CFLAGS="-O3 -flto -march=armv8-a -ffast-math -fsanitize=leak" LDFLAGS="-flto" $MAKE_ARGS -j$(nproc)
