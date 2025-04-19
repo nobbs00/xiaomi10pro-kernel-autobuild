@@ -26,7 +26,7 @@ jobs:
       run: |
         echo "CLANG_VER=20250419" >> $GITHUB_ENV
         echo "CLANG_PATH=$GITHUB_WORKSPACE/2025" >> $GITHUB_ENV
-        sudo apt-get update && sudo apt-get install ccache
+        sudo apt-get update && sudo apt-get update && sudo apt-get install ccache
     # ========== 工具链准备 ==========
     - name: 下载 Clang 工具链
       run: |
@@ -42,7 +42,7 @@ jobs:
           --depth=1 \
           $KERNEL_DIR
 
-    - name: 初始化 KernelSU
+    - name: 初始化 KernelSU-Next
       run: |
         cd $KERNEL_DIR
         curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next-susfs/kernel/setup.sh" | \
@@ -51,9 +51,8 @@ jobs:
       run: |
         cd $KERNEL_DIR
         bash build.sh cmi ksu
-        ls -lh $ANY_KERNEL_PATH  # 验证产物生成
+        ls -lh $ANY_KERNEL_PATH  # 验证内核生成
 
-    # ========== 产物处理 ==========
     - name: 上传刷入包
       uses: actions/upload-artifact@v4
       with:
