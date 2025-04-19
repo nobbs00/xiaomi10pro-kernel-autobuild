@@ -23,6 +23,7 @@ jobs:
           wget -q https://github.com/fadlyas07/clang_binutils/releases/download/21022025/clang-20.0.0-r547379-21022025-0218.tar.gz
           mkdir -p 2025
           tar -xzf clang-20.0.0-r547379-21022025-0218.tar.gz -C 2025
+          sudo apt-get update && sudo apt-get install ccache
           
       - name: 克隆内核源码
         run: |
