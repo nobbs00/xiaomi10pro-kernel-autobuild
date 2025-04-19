@@ -26,7 +26,7 @@ jobs:
       run: |
         echo "CLANG_VER=20250419" >> $GITHUB_ENV
         echo "CLANG_PATH=$GITHUB_WORKSPACE/2025" >> $GITHUB_ENV
-
+        sudo apt-get update && sudo apt-get install ccache
     # ========== 工具链准备 ==========
     - name: 下载 Clang 工具链
       run: |
